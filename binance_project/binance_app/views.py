@@ -1,13 +1,14 @@
+
+from django.http import JsonResponse
 from django.shortcuts import render
 import requests
 
-def index(request):
-    # Lógica para acessar a API da Binance e obter os dados do BTC
-    # Substitua a URL abaixo pela URL correta da API da Binance
+def obter_dados_da_api(request):
     api_url = 'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'
     response = requests.get(api_url)
-    btc_data = response.json()
+    data_response = response.json()
+    return JsonResponse(data_response)
 
-    # Adicione lógica para obter dados de preços históricos, se necessário
+def index(request):
+    return render(request, 'binance_app/index.html')
 
-    return render(request, 'binance_app/index.html', {'btc_data': btc_data})

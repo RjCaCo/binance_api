@@ -1,14 +1,47 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binance BTC Price</title>
+    <!-- <meta http-equiv="refresh" content="1"> -->  <!-- Atualizar a cada 1 segundo -->
+    <title>Atualização Dinâmica</title>
 </head>
 <body>
-    <h1>Preço do BTC</h1>
-    <p>Preço atual: {{ btc_data.price }}</p>
-    <!-- Adicione mais informações conforme necessário -->
+    <h3>Valor Inicial do Bitcoin:</h3>
+    <p id="valor-inicial"></p>
+    <h3>Valor Atualizado Bitcoin:</h3>
+    <p id="valor-api"></p>
+
+    <script>
+        function obterDadosDaAPI() {
+            fetch('/obter_dados_da_api/')
+                .then(response => response.json())
+                .then(data => {
+                    let valor_formatado = data.price;
+                    let valor_decimal = parseFloat(valor_formatado)
+                    document.getElementById('valor-api').textContent = valor_decimal.toFixed(2);
+                })
+                .catch(error => console.error('Erro ao obter dados da API:', error))
+                .finally(() => {
+                    setTimeout(obterDadosDaAPI, 1000);
+                });
+        }
+
+        // Iniciar a primeira chamada
+        obterDadosDaAPI();
+    </script>
+    <script>
+        function valorInicial() {
+            fetch('/obter_dados_da_api/')
+                .then(response => response.json())
+                .then(data => {
+                    let valor_formatado = data.price;
+                    let valor_decimal = parseFloat(valor_formatado)
+                    document.getElementById('valor-inicial').textContent = valor_decimal.toFixed(2);
+                })
+                .catch(error => console.error('Erro ao obter dados da API:', error))
+        }
+        valorInicial();
+    </script>
 </body>
 </html>

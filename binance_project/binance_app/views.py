@@ -2,13 +2,19 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import requests
 
-valor_abertura = None
-valor_atualizado = None
+btc_inicial = None
+btc_abertura = None
+btc_atualizado = None
+
+sol_inicial = None
+sol_abertura = None
+sol_atualizado = None
+
 variacao_percentual = None
 mensagem = None
 
-def abertura(request):
-    global valor_abertura
+def aberturaBTC(request):
+    global btc_abertura
     params = {
         'limit'     : 1,
         'interval'  : '1d',
@@ -17,21 +23,30 @@ def abertura(request):
     base_url = 'https://api.binance.com/api/v3/klines'
     response = requests.get(base_url, params=params)
     response_abertura = response.json()
-    valor_abertura = float(response_abertura[0][1])
+    btc_abertura = float(response_abertura[0][1])
 
-def inicial(request):
-    global valor_inicial
+def inicialBTC(request):
+    global btc_inicial
     resp = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
-    valor_inicial = resp.json()
-    return JsonResponse(valor_inicial)
+    btc_inicial = resp.json()
+    return JsonResponse(btc_inicial)
 
-def atualizado(request):
-    global valor_atualizado
+def atualizadoBTC(request):
+    global btc_atualizado
     resp = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT')
     response = resp.json()
     inteiro, decimal = str(response['price']).split('.')
     valor_formatado = f"{inteiro}.{decimal[:2]}"
-    valor_atualizado = float(valor_formatado)
+    btc_atualizado = float(valor_formatado)
+    return JsonResponse(response)
+
+def atualizadoSOL(request):
+    global sol_atualizado
+    resp = requests.get('https://api.binance.com/api/v3/ticker/price?symbol=SOLUSDT')
+    response = resp.json()
+    inteiro, decimal = str(response['price']).split('.')
+    valor_formatado = f"{inteiro}.{decimal[:2]}"
+    sol_atualizado = float(valor_formatado)
     return JsonResponse(response)
 
 def comparar_variacao(valor_abertura, valor_atualizado):
@@ -54,14 +69,14 @@ def comparar_variacao(valor_abertura, valor_atualizado):
 
 def index(request):
     return render(request, 'binance_app/index.html', {
-        'inicial'   : valor_abertura,
-        'atualizado': valor_atualizado,
+        'inicial'   : btc_abertura,
+        'atualizado': btc_atualizado,
         'variacao'  : variacao_percentual,
         'mensagem'  : mensagem
     })
 
-inicial(None)
-abertura(None)
-atualizado(None)
-comparar_variacao(valor_abertura, valor_atualizado)
+inicialBTC(None)
+aberturaBTC(None)
+atualizadoBTC(None)
+comparar_variacao(btc_abertura, btc_atualizado)
 

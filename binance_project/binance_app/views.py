@@ -12,13 +12,14 @@ mensagem: any  = None
 solana_inicial: any  = None
 solana_atualizado: any  = None
 
-saldo_btc: any  = 1
+saldo_btc: any  = 100
 saldo_dolares: any  = 10000
 saldo_total: any  = 0
 
 comprou_btc: bool = False
 vendeu_btc: bool = False
 valor_operacao_compra: any  = 0
+valor_operacao_venda: any  = 0
 
 def abertura(request):
     global valor_abertura
@@ -76,23 +77,25 @@ def comparar_variacao_BTC(valor_abertura, valor_atualizado):
     global saldo_btc
     global comprou_btc
     global vendeu_btc
-
+    global valor_operacao_venda
     variacao_completa = ((valor_atualizado - valor_abertura) / abs(valor_abertura)) * 100
     variacao_percentual = round(variacao_completa, 2)
 
-    if abs(variacao_percentual) > 1:
+    if abs(variacao_percentual) >= 3:
         if variacao_percentual > 0:
-            # Prova de ir pra argentina / paraguai do Ricardo, se no codigo não funcionar não passa de ano!!!!
-            #coloque seu codigo aqui!
-
+            vendeu_btc = True
+            valor_operacao_venda = saldo_btc * 0.03
+            saldo_btc = saldo_btc - valor_operacao_venda
+            valor_operacao_convertido = valor_operacao_venda * valor_atualizado
+            saldo_dolares = saldo_dolares + valor_operacao_convertido
             mensagem = f"A variação foi de {variacao_percentual:.2f}% para mais."
         else:
-            vendeu_btc = True
+            comprou_btc = True
             valor_operacao_compra = saldo_dolares * 0.03
             saldo_dolares = saldo_dolares - valor_operacao_compra
             valor_operacao_convertido = valor_operacao_compra / valor_atualizado
             saldo_btc = saldo_btc + valor_operacao_convertido
-            mensagem = f"A variação foi de {variacao_percentual:.2f}% para menos."
+            mensagem = f"A variação foi de {variacao_percentual:.2f}% para menos."        
     else:
 
         mensagem = "A variação não atingiu -3% nem +3%."

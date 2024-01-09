@@ -11,6 +11,9 @@ mensagem: any  = None
 
 solana_inicial: any  = None
 solana_atualizado: any  = None
+variacao_percentual_solana: any  = None
+mensagem_solana: any  = None
+
 
 saldo_btc: any  = 100
 saldo_dolares: any  = 10000
@@ -97,26 +100,25 @@ def comparar_variacao_BTC(valor_abertura, valor_atualizado):
             saldo_btc = saldo_btc + valor_operacao_convertido
             mensagem = f"A variação foi de {variacao_percentual:.2f}% para menos."        
     else:
-
         mensagem = "A variação não atingiu -3% nem +3%."
     return variacao_percentual, mensagem
 
-""" def comparar_variacao_SOL(valor_abertura, valor_atualizado):
-    global mensagem
-    global variacao_percentual
+def comparar_variacao_SOL(solana_inicial, solana_atualizado):
+    global mensagem_solana
+    global variacao_percentual_solana
+    global saldo_dolares
+    global saldo_btc
+    variacao_completa = ((solana_atualizado - solana_inicial) / abs(solana_inicial)) * 100
+    variacao_percentual_solana = round(variacao_completa, 2)
 
-    variacao_completa = ((valor_atualizado - valor_abertura) / abs(valor_abertura)) * 100
-    variacao_percentual = round(variacao_completa, 2)
-
-    if abs(variacao_percentual) > 3:
-        if variacao_percentual > 0:
-            mensagem = f"A variação foi de {variacao_percentual:.2f}% para mais."
+    if abs(variacao_percentual_solana) >= 3:
+        if variacao_percentual_solana > 0:
+            mensagem_solana = f"A variação foi de {variacao_percentual_solana:.2f}% para mais."
         else:
-            mensagem = f"A variação foi de {variacao_percentual:.2f}% para menos."
-    else:
-        mensagem = "A variação não atingiu 3%."
-    return variacao_percentual, mensagem """
-
+            mensagem_solana = f"A variação foi de {variacao_percentual_solana:.2f}% para menos."
+    else: 
+        mensagem_solana = "A variação não atingiu -3% nem +3%."
+ 
 def index(request):
     saldo_total = saldo_dolares + (saldo_btc * valor_atualizado)
     return render(request, 'binance_app/index.html', {
@@ -126,6 +128,8 @@ def index(request):
         'solana_atualizado' : solana_atualizado,
         'variacao'          : variacao_percentual,
         'mensagem'          : mensagem,
+        'variacao_solana'   : variacao_percentual_solana,
+        'mensagem_solana'   : mensagem_solana,
         'saldo_dolares'     : saldo_dolares,
         'saldo_btc'         : saldo_btc,
         'saldo_total'       : saldo_total,
@@ -137,4 +141,5 @@ atualizado(None)
 solanaInicial(None)
 solanaAtualizado(None)
 comparar_variacao_BTC(valor_abertura, valor_atualizado)
+comparar_variacao_SOL(solana_inicial, solana_atualizado)
 

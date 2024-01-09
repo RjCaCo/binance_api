@@ -16,7 +16,7 @@
 
         <!-- ISSO AQUI É HTML E JAVASCRIPT -->
 
-        <h2>INVESTIDOR: RICARDO JARDIM</h2>
+        <h2>INVESTIDOR: RICARDO JARDIN</h2>
         <h3>US$ {{ saldo_dolares }}</h3>
         <h3>BTC: {{ saldo_btc }}</h3>
         <h3>TOTAL: {{ saldo_total }}</h3><br />
@@ -36,7 +36,13 @@
         <h2>SOLANA</h2>
         <h3>Valor Inicial Solana: <span id="inicial-solana"></span></h3>
         <h3>Valor Atualizado Solana: <span id="atualizado-solana"></span></h3>
-
+        <h3>Variação de : {{ variacao_solana }} %</h3>
+        <h3>{{ mensagem_solana }}</h3><br />
+        {% if vendeu_btc == true %}
+            <div>vendeu 3%</div>
+        {% else  %}
+            <div>não vendeu</div>
+        {% endif %}
         <script>
             function valorInicial() {
                 fetch('/inicial/')
